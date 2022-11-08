@@ -6,7 +6,6 @@ plugins {
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.21"
-	id("com.apollographql.apollo3") version "3.6.2"
 }
 
 group = "com.jambit"
@@ -24,14 +23,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:latest.release")
-	implementation("com.apollographql.apollo3:apollo-runtime")
-	implementation("com.apollographql.apollo3:apollo-api")
-}
-
-apollo {
-	generateKotlinModels.set(true)
-	packageName.set("com.jambit.foodfittery.cms")
 }
 
 tasks.withType<KotlinCompile> {

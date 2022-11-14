@@ -1,0 +1,704 @@
+# This file was generated based on "schema.json". Do not edit manually.
+
+schema {
+    query: Query
+}
+
+directive @extends on OBJECT | INTERFACE
+
+directive @external on FIELD_DEFINITION
+
+directive @key(fields: _FieldSet!) on OBJECT | INTERFACE
+
+directive @provides(fields: _FieldSet!) on FIELD_DEFINITION
+
+directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
+
+"An object with an ID."
+interface Node {
+    id: ID!
+}
+
+interface TagOrCategorySliderItem {
+    displayName: String!
+    id: ID!
+    image: URL!
+}
+
+union ApplianceAdjustment = OvenAdjustment
+
+union InspirationScreenItem = DishOfTheDay | InspirationScreenContinuousSlider | InspirationScreenLink | InspirationScreenPagingSlider | InspirationScreenRecentlyViewedSlider | InspirationScreenTagsSlider
+
+union InspirationScreenTagsSliderItem = TagCategorySliderItem | TagSliderItem
+
+type BuildingBlock implements Node {
+    "Generic name of the dishs building block to describe all available base, side, or flex blocks."
+    buildingBlockName: String!
+    "The applied exchanges."
+    exchangeIds: [Int!]!
+    id: ID!
+    ingredients: [Ingredient!]!
+    "Display string of this specific selected building block of the dish."
+    name: String!
+}
+
+type DishOfTheDay {
+    title: String!
+}
+
+type DishVariant implements Node {
+    base: BuildingBlock!
+    defaultNumberOfPortions: Int!
+    " The dietary restrictions, e.g. 'LACTOSE_FREE', that match this variant. "
+    dietaryRestrictions: [String!]!
+    dishId: ID!
+    "The (translated) display name of the dish."
+    dishName: String!
+    dishVariantName: String!
+    "The applied exchanges."
+    exchangeIds: [Int!]!
+    flex: BuildingBlock!
+    id: ID!
+    image: URL
+    "The internal (untranslated) name of the dish. Not useful for displaying it to a user."
+    internalDishName: String!
+    numberOfPortions: Int!
+    nutrition: Nutrition
+    portionQualifier: PortionQualifier!
+    side: BuildingBlock
+    steps: [InstructionStep!]
+    "Tag IDs of the dish."
+    tagIds: [ID!]!
+    "Exact total time of the selected dish variant. On-the-fly calculation might slow down the response time."
+    totalTimeInMin: Int!
+    "Approximate total time of the dish variant. This is equivalent to `totalTimeInMin` of the original/unmodified dish variant, e.g. no exchange ingredients."
+    totalTimeInMinApproximate: Int!
+}
+
+type DishVariantBbIds {
+    baseId: ID!
+    flexId: ID!
+    sideId: ID
+}
+
+type DishVariantConnection {
+    edges: [DishVariantEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+type DishVariantEdge {
+    node: DishVariant!
+}
+
+type DishView implements Node {
+    base: [BuildingBlock!]!
+    disallowedVariants: [DishVariantBbIds!]!
+    dishName: String!
+    displayName: String!
+    flex: [BuildingBlock!]!
+    id: ID!
+    image: URL
+    side: [BuildingBlock!]
+}
+
+type Ingredient {
+    "Option if the ingredient can be left out completly."
+    canBeLeftOut: Boolean!
+    "Indicates whether the ingredient has been left out."
+    hasBeenLeftOut: Boolean!
+    "The ID to remove the ingredient without replacement."
+    leftOutId: Int
+    """
+
+    The original ingredient plus possible exchanges.
+    The original ingredient is always at index 0.
+    """
+    options: [IngredientDetails!]!
+    """
+
+    The selected ingredient.
+    If the ingredient has been left out, the default ingredient is returned instead.
+    """
+    selectedOption: IngredientDetails!
+    """
+
+    The index of the displayed ingredient within the exchange array.
+    -1 means the ingredient has been left out.
+    """
+    selectedOptionIndex: Int!
+}
+
+type IngredientDetails {
+    "The display quantity of the ingredient. This depends on the locale and is intended for presentation."
+    displayQuantity: String
+    exchangeId: Int
+    image: URL
+    ingredientType: IngredientType!
+    """
+
+    The display string for the ingredient. Depending on the quantity, this may either be singular or plural.
+    This is in contrast to the display name of `IngredientType`, which does not change depending on the
+    ingredient's quantity.
+    """
+    name: String
+    """
+
+    The quantity of the ingredient. This is locale independent and thus should always be machine readable, viz. it is a
+    decimal number using the dot as point character to separate the integer and the fractional part.
+    """
+    quantity: String
+    unit: String
+}
+
+type IngredientType {
+    displayName: String!
+    id: String!
+    image: URL
+    popular: Boolean!
+    staple: Boolean!
+}
+
+type InspirationScreenContinuousSlider {
+    dietaryRestrictions: [String!]
+    dishNames: [String!]
+    displayName: String!
+    ingredients: [String!]
+    showMoreButton: Boolean!
+    sliderItemCount: Int!
+    sliderRequestCount: Int!
+    tagCategories: [String!]
+    tags: [String!]
+}
+
+type InspirationScreenLink {
+    destination: Destination!
+}
+
+type InspirationScreenPagingSlider {
+    dietaryRestrictions: [String!]
+    dishNames: [String!]
+    displayName: String!
+    ingredients: [String!]
+    showMoreButton: Boolean!
+    sliderItemCount: Int!
+    sliderRequestCount: Int!
+    tagCategories: [String!]
+    tags: [String!]
+}
+
+type InspirationScreenRecentlyViewedSlider {
+    displayName: String!
+    showMoreButton: Boolean!
+    showMoreItemCount: Int!
+    sliderItemCount: Int!
+}
+
+type InspirationScreenTagsSlider {
+    displayName: String!
+    tagsOrCategories: [InspirationScreenTagsSliderItem!]!
+}
+
+type InstructionItem {
+    applianceAdjustment: ApplianceAdjustment
+    text: String!
+}
+
+type InstructionStep {
+    ingredients: [IngredientDetails!]
+    instructions: [InstructionItem!]
+    name: String!
+}
+
+type Nutrient {
+    children: [Nutrient!]
+    "The display quantity of the nutrient. This depends on the locale and is intended for presentation."
+    displayQuantity: String
+    percentage: String
+    percentageType: PercentageType
+    """
+
+    The quantity of the nutrient. This is locale independent and thus should always be machine readable, viz. it is a
+    decimal number using the dot as point character to separate the integer and the fractional part.
+    """
+    quantity: String
+    type: NutrientType!
+    unit: String
+}
+
+type Nutrition {
+    nutrients: [Nutrient!]
+}
+
+type OvenAdjustment {
+    durationInSeconds: Int!
+    isPreheat: Boolean!
+    mode: HeatingMode!
+    rackPosition: RackPosition!
+    temperatureInCelsius: Int!
+}
+
+type PageInfo {
+    endCursor: String!
+    hasNextPage: Boolean!
+}
+
+type Query {
+    _service: _Service
+    """
+
+    Returns the building blocks that can be used as alternatives for the current ones.
+
+    For example, the base building blocks in the response can be used together with the currently selected
+    side and flex building blocks.
+    """
+    alternativeDishBuildingBlocks(
+        config: RequestConfig!,
+        "The currently selected building blocks."
+        currentBbs: DishVariantBbIdsInput!,
+        dietaryRestrictions: [String!]!,
+        id: ID!,
+        portions: Int,
+        replaceIngredients: [Int!]
+    ): DishView
+    dishBuildingBlocks(config: RequestConfig!, id: ID!, portions: Int): DishView
+    dishVariant(config: RequestConfig!, dietaryRestrictions: [String!], id: ID!, portions: Int, replaceIngredients: [Int!]): DishVariant
+    dishVariantByBuildingBlocks(baseId: ID!, config: RequestConfig!, dishId: ID!, flexId: ID!, portions: Int, sideId: ID): DishVariant
+    dishVariantSuggestionsConnection(
+        after: String,
+        config: RequestConfig!,
+        dietaryRestrictions: [String!],
+        "number of results to return, however not more than 100 are returned at a time"
+        first: Int!
+    ): DishVariantConnection!
+    dishes(config: RequestConfig!): [DishView!]!
+    ingredients(config: RequestConfig!): [IngredientType!]
+    inspirations(config: RequestConfig!, dietaryRestrictions: [String!]): [InspirationScreenItem]
+    search(
+        "A list of tag category IDs. The final search filter is created from this list and tags above."
+        categories: [ID!],
+        config: RequestConfig!,
+        """
+
+        List of dietary restrictions, e.g. 'LACTOSE_FREE'. All of these restrictions must be met for a dish variant
+        to be a match.
+        """
+        dietaryRestrictions: [String!],
+        """
+
+        List of dishes e.g. "pasta red sauce". This is only a temporary feature, until we can search by dish categories
+        or other curated attributes; but for now, the app can use this field to search for (hardcoded) dish names.
+        """
+        dishNames: [String!],
+        "If true or 'null', when multiple dish variants have the same name, only the first is returned."
+        distinctByName: Boolean,
+        """
+
+        List of selected ingredients. All of the specified ingredients must be present in a dish variant for
+        it to be a match.
+        The ingredients are specified using their IDs (see IngredientType#id).
+        """
+        ingredients: [String!],
+        "The number of results the client wants to receive."
+        limit: Int!,
+        "The offset of the first result in the overall result list. Used for pagination."
+        offset: Int,
+        "A seed for deterministic shuffling of the search results. When no seed is set, the sort order is 'best matches first'."
+        seed: Int,
+        "A list of tag IDs. The final search filter is created from this list and categories below."
+        tags: [ID!]
+    ): SearchResponse
+    "Returns a list of tag categories and their corresponding tags."
+    tagCategories(config: RequestConfig!): [TagCategory!]
+    "Returns the current version of the GraphQL backend API. This is a monotonically increasing integer."
+    version: Int!
+}
+
+type SearchResponse {
+    dishVariants: [DishVariant!]!
+    matchingDietaryRestrictions: [String!]
+    matchingDishes: [DishView!]
+    """
+
+    A list of ingredients which are present in the found recipes.
+
+    Getting this information is rather expensive. Thus, you should not request
+    it if you don't need it.
+    """
+    matchingIngredients: [IngredientType!]
+    matchingTagIds: [ID!]
+    "The number of results returned in the response."
+    resultCount: Int!
+    "The total number of results matching the query."
+    totalResultCount: Int!
+}
+
+type Tag {
+    displayName: String!
+    id: ID!
+    image: URL
+}
+
+type TagCategory {
+    displayName: String!
+    id: ID!
+    image: URL
+    tags: [Tag!]!
+}
+
+type TagCategorySliderItem implements TagOrCategorySliderItem {
+    displayName: String!
+    id: ID!
+    image: URL!
+}
+
+type TagSliderItem implements TagOrCategorySliderItem {
+    displayName: String!
+    id: ID!
+    image: URL!
+}
+
+type _Service {
+    sdl: String!
+}
+
+enum Destination {
+    HOME_CONNECT
+    INGREDIENT_SEARCH
+}
+
+enum ErrorDetail {
+    """
+
+    The deadline expired before the operation could complete.
+
+    For operations that change the state of the system, this error
+    may be returned even if the operation has completed successfully.
+    For example, a successful response from a server could have been
+    delayed long enough for the deadline to expire.
+
+    HTTP Mapping: 504 Gateway Timeout
+    Error Type: UNAVAILABLE
+    """
+    DEADLINE_EXCEEDED
+    """
+
+    The server detected that the client is exhibiting a behavior that
+    might be generating excessive load.
+
+    HTTP Mapping: 429 Too Many Requests or 420 Enhance Your Calm
+    Error Type: UNAVAILABLE
+    """
+    ENHANCE_YOUR_CALM
+    """
+
+    The requested field is not found in the schema.
+
+    This differs from `NOT_FOUND` in that `NOT_FOUND` should be used when a
+    query is valid, but is unable to return a result (if, for example, a
+    specific video id doesn't exist). `FIELD_NOT_FOUND` is intended to be
+    returned by the server to signify that the requested field is not known to exist.
+    This may be returned in lieu of failing the entire query.
+    See also `PERMISSION_DENIED` for cases where the
+    requested field is invalid only for the given user or class of users.
+
+    HTTP Mapping: 404 Not Found
+    Error Type: BAD_REQUEST
+    """
+    FIELD_NOT_FOUND
+    """
+
+    The client specified an invalid argument.
+
+    Note that this differs from `FAILED_PRECONDITION`.
+    `INVALID_ARGUMENT` indicates arguments that are problematic
+    regardless of the state of the system (e.g., a malformed file name).
+
+    HTTP Mapping: 400 Bad Request
+    Error Type: BAD_REQUEST
+    """
+    INVALID_ARGUMENT
+    """
+
+    The provided cursor is not valid.
+
+    The most common usage for this error is when a client is paginating
+    through a list that uses stateful cursors. In that case, the provided
+    cursor may be expired.
+
+    HTTP Mapping: 404 Not Found
+    Error Type: NOT_FOUND
+    """
+    INVALID_CURSOR
+    """
+
+    Unable to perform operation because a required resource is missing.
+
+    Example: Client is attempting to refresh a list, but the specified
+    list is expired. This requires an action by the client to get a new list.
+
+    If the user is simply trying GET a resource that is not found,
+    use the NOT_FOUND error type. FAILED_PRECONDITION.MISSING_RESOURCE
+    is to be used particularly when the user is performing an operation
+    that requires a particular resource to exist.
+
+    HTTP Mapping: 400 Bad Request or 500 Internal Server Error
+    Error Type: FAILED_PRECONDITION
+    """
+    MISSING_RESOURCE
+    """
+
+    Service Error.
+
+    There is a problem with an upstream service.
+
+    This may be returned if a gateway receives an unknown error from a service
+    or if a service is unreachable.
+    If a request times out which waiting on a response from a service,
+    `DEADLINE_EXCEEDED` may be returned instead.
+    If a service returns a more specific error Type, the specific error Type may
+    be returned instead.
+
+    HTTP Mapping: 502 Bad Gateway
+    Error Type: UNAVAILABLE
+    """
+    SERVICE_ERROR
+    """
+
+    Request failed due to network errors.
+
+    HTTP Mapping: 503 Unavailable
+    Error Type: UNAVAILABLE
+    """
+    TCP_FAILURE
+    """
+
+    Request throttled based on server concurrency limits.
+
+    HTTP Mapping: 503 Unavailable
+    Error Type: UNAVAILABLE
+    """
+    THROTTLED_CONCURRENCY
+    """
+
+    Request throttled based on server CPU limits
+
+    HTTP Mapping: 503 Unavailable.
+    Error Type: UNAVAILABLE
+    """
+    THROTTLED_CPU
+    """
+
+    The operation is not implemented or is not currently supported/enabled.
+
+    HTTP Mapping: 501 Not Implemented
+    Error Type: BAD_REQUEST
+    """
+    UNIMPLEMENTED
+    """
+
+    Unknown error.
+
+    This error should only be returned when no other error detail applies.
+    If a client sees an unknown errorDetail, it will be interpreted as UNKNOWN.
+
+    HTTP Mapping: 500 Internal Server Error
+    """
+    UNKNOWN
+}
+
+enum ErrorType {
+    """
+
+    Bad Request.
+
+    There is a problem with the request.
+    Retrying the same request is not likely to succeed.
+    An example would be a query or argument that cannot be deserialized.
+
+    HTTP Mapping: 400 Bad Request
+    """
+    BAD_REQUEST
+    """
+
+    The operation was rejected because the system is not in a state
+    required for the operation's execution.  For example, the directory
+    to be deleted is non-empty, an rmdir operation is applied to
+    a non-directory, etc.
+
+    Service implementers can use the following guidelines to decide
+    between `FAILED_PRECONDITION` and `UNAVAILABLE`:
+
+    - Use `UNAVAILABLE` if the client can retry just the failing call.
+    - Use `FAILED_PRECONDITION` if the client should not retry until
+    the system state has been explicitly fixed.  E.g., if an "rmdir"
+    fails because the directory is non-empty, `FAILED_PRECONDITION`
+    should be returned since the client should not retry unless
+    the files are deleted from the directory.
+
+    HTTP Mapping: 400 Bad Request or 500 Internal Server Error
+    """
+    FAILED_PRECONDITION
+    """
+
+    Internal error.
+
+    An unexpected internal error was encountered. This means that some
+    invariants expected by the underlying system have been broken.
+    This error code is reserved for serious errors.
+
+    HTTP Mapping: 500 Internal Server Error
+    """
+    INTERNAL
+    """
+
+    The requested entity was not found.
+
+    This could apply to a resource that has never existed (e.g. bad resource id),
+    or a resource that no longer exists (e.g. cache expired.)
+
+    Note to server developers: if a request is denied for an entire class
+    of users, such as gradual feature rollout or undocumented allowlist,
+    `NOT_FOUND` may be used. If a request is denied for some users within
+    a class of users, such as user-based access control, `PERMISSION_DENIED`
+    must be used.
+
+    HTTP Mapping: 404 Not Found
+    """
+    NOT_FOUND
+    """
+
+    The caller does not have permission to execute the specified
+    operation.
+
+    `PERMISSION_DENIED` must not be used for rejections
+    caused by exhausting some resource or quota.
+    `PERMISSION_DENIED` must not be used if the caller
+    cannot be identified (use `UNAUTHENTICATED`
+    instead for those errors).
+
+    This error Type does not imply the
+    request is valid or the requested entity exists or satisfies
+    other pre-conditions.
+
+    HTTP Mapping: 403 Forbidden
+    """
+    PERMISSION_DENIED
+    """
+
+    The request does not have valid authentication credentials.
+
+    This is intended to be returned only for routes that require
+    authentication.
+
+    HTTP Mapping: 401 Unauthorized
+    """
+    UNAUTHENTICATED
+    """
+
+    Currently Unavailable.
+
+    The service is currently unavailable.  This is most likely a
+    transient condition, which can be corrected by retrying with
+    a backoff.
+
+    HTTP Mapping: 503 Unavailable
+    """
+    UNAVAILABLE
+    """
+
+    Unknown error.
+
+    For example, this error may be returned when
+    an error code received from another address space belongs to
+    an error space that is not known in this address space.  Also
+    errors raised by APIs that do not return enough error information
+    may be converted to this error.
+
+    If a client sees an unknown errorType, it will be interpreted as UNKNOWN.
+    Unknown errors MUST NOT trigger any special behavior. These MAY be treated
+    by an implementation as being equivalent to INTERNAL.
+
+    When possible, a more specific error should be provided.
+
+    HTTP Mapping: 520 Unknown Error
+    """
+    UNKNOWN
+}
+
+enum HeatingMode {
+    BOTTOM_HEAT
+    HOT_AIR
+    HOT_AIR_GRILLING
+    TOP_BOTTOM_HEAT
+    TOP_HEAT
+}
+
+enum NutrientType {
+    ALCOHOL
+    CALCIUM
+    CALORIES
+    CARBOHYDRATES
+    CARBOHYDRATES_EFFECTIVE
+    CHOLESTEROL
+    FAT
+    FIBER
+    FOLATE
+    IRON
+    MAGNESIUM
+    MONOUNSATURATED_FATTY_ACIDS
+    POLYUNSATURATED_FATTY_ACIDS
+    POTASSIUM
+    PROTEIN
+    SATURATED_FATTY_ACIDS
+    SODIUM
+    SUGAR
+    VITAMIN_A
+    VITAMIN_B1
+    VITAMIN_B12
+    VITAMIN_B2
+    VITAMIN_C
+    VITAMIN_D
+    VITAMIN_E
+    ZINC
+}
+
+enum PercentageType {
+    MAXIMAL
+    OPTIMAL
+}
+
+enum PortionQualifier {
+    PIECE
+    PORTION
+    SLICE
+}
+
+enum RackPosition {
+    BOTTOM
+    MIDDLE
+    TOP
+}
+
+"An absolute or relative URL"
+scalar URL
+
+scalar _FieldSet
+
+input DishVariantBbIdsInput {
+    baseId: ID!
+    flexId: ID!
+    sideId: ID
+}
+
+input RequestConfig {
+    "A ISO 639-1 language code."
+    locale: String = "de"
+    """
+
+    The version of the API for which the client was developed.
+
+    This can be used by the backend to maintain backward compatibility.
+    """
+    supportedApiVersion: Int
+}

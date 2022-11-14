@@ -1,0 +1,8 @@
+query DisheList{
+    dishes(config: {}) {
+        id
+        dishName
+        displayName
+        image
+    }
+}

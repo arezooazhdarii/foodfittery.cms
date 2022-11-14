@@ -1,4 +1,42 @@
-# Project exclude paths
-/.gradle/
-/build/
+HELP.md
+.gradle
+build/
 /build/classes/kotlin/main/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Security key ###
+spartan-apricot-292007-656b307b1487.json
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/.name
+.idea/jarRepositories.xml
+.idea/kotlinc.xml
+.idea/misc.xml
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
